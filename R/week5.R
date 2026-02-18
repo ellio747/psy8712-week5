@@ -6,7 +6,7 @@ library(tidyverse)
 Adata_tbl <- read_delim("../data/Aparticipants.dat", delim = "-", col_names = c("casenum", "parnum", "stimver", "datadate", "qs"))
 Anotes_tbl <- read_csv("../data/Anotes.csv")
 Bdata_tbl <- read_tsv("../data/Bparticipants.dat", col_names = c("casenum", "parnum", "stimver", "datadate", paste0("q",1:10)))
-Bnotes_tbl <- read_tsv("../data/Bnotes.txt", col_names = TRUE, col_types = "ic") # One of these needs to be read_table()
+Bnotes_tbl <- read_tsv("../data/Bnotes.txt", col_names = TRUE, col_types = "ic") # One of these needs to be read_table() or read_fwf()
 
 # Data Cleaning
 Aclean_tbl <- Adata_tbl %>% 
@@ -20,5 +20,5 @@ ABclean_tbl <- Bdata_tbl %>%
   mutate(across(q1:q10, as.integer)) %>%
   left_join(Bnotes_tbl, by = "parnum") %>%
   filter(is.na(notes)) %>% 
-  bind_rows(mutate(Aclean_tbl, lab = "A")) %>% ## I have to figure this line out in order to add B to the Bdata lab column. 
+  bind_rows(mutate(Aclean_tbl, lab = "A")) %>% replace_na(list(lab = "B")) %>% 
   select(-notes)
