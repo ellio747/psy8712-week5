@@ -20,5 +20,5 @@ ABclean_tbl <- Bdata_tbl %>%
   mutate(across(q1:q10, as.integer)) %>%
   left_join(Bnotes_tbl, by = "parnum") %>%
   filter(is.na(notes)) %>% 
-  bind_rows(mutate(Aclean_tbl, lab = "A")) %>% replace_na(list(lab = "B")) %>% 
+  bind_rows(B = ., A = Aclean_tbl, .id = "lab") %>%
   select(-notes)
