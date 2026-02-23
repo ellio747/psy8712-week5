@@ -10,14 +10,14 @@ Bnotes_tbl <- read_tsv("../data/Bnotes.txt", col_names = TRUE, col_types = "dc")
 
 # Data Cleaning
 Aclean_tbl <- Adata_tbl %>% 
-  separate(qs, into = paste0("q", 1:5), sep = "-") %>% 
+  separate_wider_delim(qs, delim = "-", names = paste0("q", 1:5)) %>% # Experimental Lifecycle vs separate() which is Superseded Lifecycle
   mutate(datadate = mdy_hms(datadate)) %>% 
   mutate(across(q1:q5, as.integer)) %>%
-  left_join(Anotes_tbl, by = "parnum") %>% 
+  full_join(Anotes_tbl, by = "parnum") %>% 
   filter(is.na(notes))
 ABclean_tbl <- Bdata_tbl %>% 
-  mutate(datadate = mdy_hms(datadate)) %>% 
-  mutate(across(q1:q10, as.integer)) %>%
+  mutate(datadate = mdy_hms(datadate),  
+         across(q1:q10, as.integer)) %>% # This was a different way Richard demonstrated using mutate. 
   left_join(Bnotes_tbl, by = "parnum") %>%
   filter(is.na(notes)) %>% 
   bind_rows(B = ., A = Aclean_tbl, .id = "lab") %>%
